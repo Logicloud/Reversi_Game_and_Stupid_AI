@@ -1,4 +1,4 @@
-# Reversi Game and an Almost AI
+# Reversi Game and a Stupid AI
 
 Hi! Thank you for trying this project! This is a Reversi game written with Python 2.7.
 
