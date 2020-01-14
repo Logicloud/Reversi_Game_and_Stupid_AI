@@ -6,6 +6,7 @@ import pygame.gfxdraw
 from pygame.locals import *
 from Game import find_avail_points, priority, computer_player
 
+
 class Reversi(object):
 
 	def __init__(self):
@@ -72,27 +73,24 @@ class Reversi(object):
 		PVP_mode = printing_font.render("PVP", True, black)
 		self.screen.blit(PVE_mode, (145, 255))
 		self.screen.blit(PVP_mode, (470, 255))
-		pygame.display.update()		
-		
+		pygame.display.update()
+
 		# Check which mode is chosen
-		fuse_1 = 0
-		cont = True
-		while cont and fuse_1 < 1000:
-			fuse_1 += 1
-			time.sleep(0.2)		
+		event_happened = False
+		while not event_happened:
 
-			for event in pygame.event.get():
-				if event.type == QUIT:
-					sys.exit()
-				if event.type == MOUSEBUTTONDOWN:
+			event = pygame.event.wait()
+				# if event.type == pygame.QUIT:
+				# 	sys.exit()
+			if event.type == pygame.MOUSEBUTTONDOWN:
 
-					mode_c, mode_r = event.pos
-					if 100 < mode_c < 275 and 210 < mode_r < 335:
-						cont = False
-						PVE = True
-					elif 425 < mode_c < 600 and 210 < mode_r < 335:
-						cont = False						
-						PVE = False
+				mode_c, mode_r = event.pos
+				if 100 < mode_c < 275 and 210 < mode_r < 335:
+					PVE = True
+					event_happened = True
+				elif 425 < mode_c < 600 and 210 < mode_r < 335:
+					PVE = False
+					event_happened = True
 
 		# If PVE mode is chosen, ask which color the user want to play
 		# If user choose black, user play first. Otherwise, AI play first
@@ -104,9 +102,9 @@ class Reversi(object):
 			pygame.draw.rect(self.screen, black, (425, 210, 175, 125), 2)
 
 			printing_font = pygame.font.Font(None, 60)
-			pygame.draw.circle(self.screen, white, (188, 273), grid_width/2-2, 0)
-			pygame.draw.circle(self.screen, black, (188, 273), grid_width/2-2, 1)			
-			pygame.draw.circle(self.screen, black, (513, 273), grid_width/2-2, 0)
+			pygame.draw.circle(self.screen, white, (188, 273), int(grid_width/2)-2, 0)
+			pygame.draw.circle(self.screen, black, (188, 273), int(grid_width/2)-2, 1)
+			pygame.draw.circle(self.screen, black, (513, 273), int(grid_width/2)-2, 0)
 
 			pygame.gfxdraw.box(self.screen, pygame.Rect(170,75,361,100), (255,255,255,100))
 
@@ -117,14 +115,14 @@ class Reversi(object):
 			self.screen.blit(choose_color, (218, 95))
 			self.screen.blit(notification, (298, 140))
 
-			pygame.display.update()		
-		
+			pygame.display.update()
+
 			fuse_2 = 0
 			cont = True
 
 			while cont and fuse_2 < 1000:
 				fuse_2 += 1
-				time.sleep(0.2)	
+				time.sleep(0.2)
 
 				for event in pygame.event.get():
 					if event.type == QUIT:
@@ -135,20 +133,20 @@ class Reversi(object):
 							cont = False
 							human_draw = False
 						elif 425 < mode_c < 600 and 210 < mode_r < 335:
-							cont = False						
+							cont = False
 							human_draw = True
 
 		# Game start at here
 		# cont will plus one everytime when there is no possible move for one executive
 		# cont will be reset to zero if one step is taken
 		# if cont = 2, it means that both players have no possible move, then game end
-		cont = 0  
+		cont = 0
 		fuse_3 = 0
 		available_space = 1
 
 		while cont < 2 and available_space > 0 and fuse_3 < 10000:
 
-			self.screen.fill(background)	
+			self.screen.fill(background)
 			available_space = 0
 			fuse_3 += 1
 			computer_draw = False
@@ -180,17 +178,17 @@ class Reversi(object):
 							delay = True
 							self.executive *= -1
 							cont += 1
-						# Put and reverse pieces 
+						# Put and reverse pieces
 						if board_pos in move_dict.keys():
 							self.board[board_pos[0]][board_pos[1]] = self.executive
 							for site in move_dict[board_pos]:
 								self.board[site[0]][site[1]] *= -1
 							self.executive *= -1
 							# In PVE mode, after one step, activate computer player
-							if PVE: 
-								computer_draw = True					
+							if PVE:
+								computer_draw = True
 							cont = 0
-			else:			
+			else:
 				human_draw = True
 				computer_draw = True
 
@@ -203,7 +201,7 @@ class Reversi(object):
 				c_end = boundary + row * grid_length
 				r = boundary + i * grid_length
 				pygame.draw.line(self.screen, black, (c_start, r), (c_end, r), line_width)
-			for j in range(column + 1): 
+			for j in range(column + 1):
 				r_start = boundary
 				r_end = boundary + column * grid_width
 				c = boundary + j * grid_width
@@ -214,19 +212,19 @@ class Reversi(object):
 			black_count = 0
 
 			for i in range(row):
-				y = boundary + i * grid_width + grid_width / 2 
+				y = boundary + i * grid_width + int(grid_width/2)
 				for j in range(column):
-					x = boundary + j * grid_length + grid_length / 2					
+					x = boundary + j * grid_length + int(grid_length / 2)
 					if self.board[i][j] == 1:
-						white_count += 1 
-						pygame.draw.circle(self.screen, white, (x, y), grid_width/2-2, 0)
+						white_count += 1
+						pygame.draw.circle(self.screen, white, (x, y), int(grid_width/2)-2, 0)
 					elif self.board[i][j] == -1:
-						black_count += 1					
-						pygame.draw.circle(self.screen, black, (x, y), grid_width/2-2, 0)
+						black_count += 1
+						pygame.draw.circle(self.screen, black, (x, y), int(grid_width/2)-2, 0)
 					else:
 						# count available sites
 						available_space += 1
-			
+
 			# Display current mode
 			printing_font = pygame.font.Font(None, 80)
 			if PVE:
@@ -236,14 +234,14 @@ class Reversi(object):
 			self.screen.blit(play_mode, (550, 50))
 
 			# Show executive and scores
-			pygame.draw.circle(self.screen, white, (560, 300), grid_width/2-2, 0)			
-			pygame.draw.circle(self.screen, black, (560, 400), grid_width/2-2, 0)
+			pygame.draw.circle(self.screen, white, (560, 300), int(grid_width/2)-2, 0)
+			pygame.draw.circle(self.screen, black, (560, 400), int(grid_width/2)-2, 0)
 
-			if self.executive == 1: 
-				pygame.draw.circle(self.screen, red, (560, 300), grid_width/2, 4)
+			if self.executive == 1:
+				pygame.draw.circle(self.screen, red, (560, 300), int(grid_width/2), 4)
 			else:
-				pygame.draw.circle(self.screen, red, (560, 400), grid_width/2, 4)	
-			
+				pygame.draw.circle(self.screen, red, (560, 400), int(grid_width/2), 4)
+
 			printing_font = pygame.font.Font(None, 60)
 			print_white_count = printing_font.render("x %d" % (white_count), True, black)
 			print_black_count = printing_font.render("x %d" % (black_count), True, black)
@@ -273,18 +271,18 @@ class Reversi(object):
 					white_count = 0
 					black_count = 0
 					for i in range(row):
-						y = boundary + i * grid_width + grid_width / 2 
+						y = boundary + i * grid_width + int(grid_width/2)
 						for j in range(column):
-							x = boundary + j * grid_length + grid_length / 2					
+							x = boundary + j * grid_length + int(grid_length / 2)
 							if self.board[i][j] == 1:
 								white_count += 1
-								pygame.draw.circle(self.screen, white, (x, y), grid_width/2-2, 0)
+								pygame.draw.circle(self.screen, white, (x, y), int(grid_width/2)-2, 0)
 							elif self.board[i][j] == -1:
-								black_count += 1					
-								pygame.draw.circle(self.screen, black, (x, y), grid_width/2-2, 0)
+								black_count += 1
+								pygame.draw.circle(self.screen, black, (x, y), int(grid_width/2)-2, 0)
 							else:
 								available_space += 1
-					
+
 					pygame.display.update()
 
 		# Display Game Over
@@ -298,18 +296,18 @@ class Reversi(object):
 		# Display winner
 		pygame.gfxdraw.box(self.screen, pygame.Rect(70, 340, 401, 100), (255, 255, 255, 100))
 		if white_count < black_count:
-			Winner = printing_font.render("Winner is Black", True, orange)
+			Winner = printing_font.render("Black Win", True, orange)
 			self.screen.blit(Winner, (85, 370))
-		elif white_count > black_count: 
-			Winner = printing_font.render("Winner is White", True, orange)
-			self.screen.blit(Winner, (85, 370))		
+		elif white_count > black_count:
+			Winner = printing_font.render("White Win", True, orange)
+			self.screen.blit(Winner, (85, 370))
 		else:
 			Winner = printing_font.render("Draw", True, orange)
-			self.screen.blit(Winner, (211, 370))	
+			self.screen.blit(Winner, (211, 370))
 
-		pygame.display.update()	
-		time.sleep(5)
+		pygame.display.update()
+		time.sleep(10)
 		sys.exit()
-	
+
 A = Reversi()
 A.draw_board()

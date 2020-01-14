@@ -1,15 +1,16 @@
 import numpy as np
 import random
 
+
 # Find all available sites for the executive
 def find_avail_points(board, executive):
- 	directions = np.array([[0, 1], [0, -1], [ 1, 0], [-1,  0],
-						   [1, 1], [1, -1], [-1, 1], [-1, -1]])
+	directions = np.array([[0, 1], [0, -1], [ 1, 0], [-1,  0],
+							[1, 1], [1, -1], [-1, 1], [-1, -1]])
 	possible_move = {}
 
 	for row in range(8):
-		for column in range(8): 
-			psb = False         
+		for column in range(8):
+			psb = False
 			if board[row][column] == 0:  		# Available place
 				temp_pts = []                   # Temporary changed pieces
 				# Loop through all directions
@@ -23,18 +24,18 @@ def find_avail_points(board, executive):
 					while board[checkr][checkc] == -executive:
 						dirc_pts.append([checkr, checkc])
 						checkr, checkc = checkr + dirc[0], checkc + dirc[1]
-							
+
 						if checkr < 0 or checkr > 7 or checkc < 0 or checkc > 7 or board[checkr][checkc] == 0:
-							break		
-						# If there is another executive's piece at this direction, record the site 
+							break
+						# If there is another executive's piece at this direction, record the site
 						# and sites to be reversed
 						if board[checkr][checkc] == executive:
 							psb = True
 							temp_pts.extend(dirc_pts)
 							break
-			# Build dictionary				
-			if psb:	
-				possible_move[(row, column)] = temp_pts		
+			# Build dictionary
+			if psb:
+				possible_move[(row, column)] = temp_pts
 
 	return possible_move
 
@@ -49,8 +50,8 @@ def priority():
 			# Try to put piece at boundaries
 			if i == 0 or i == 7 or j == 0 or j == 7:
 				priority_dict[(i, j)] = 2
-			# Always try not to put piece next to corner	
-			if (i, j) in pri_0: 
+			# Always try not to put piece next to corner
+			if (i, j) in pri_0:
 				priority_dict[(i, j)] = 0
 			# Always try to put piece at corner
 			if (i, j) in pri_3 :
